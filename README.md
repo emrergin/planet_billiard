@@ -1,5 +1,5 @@
 ## Planet Billiard
-The earth is under attack by planet sized aliens. You can defend the earth by ramming into them, but take care of the explosions.
+The earth is under attack by planet sized aliens. You can defend the earth by ramming earth into them, but take care of the resulting explosions.
 
 If not clear, this is a work in progress.
 
@@ -10,6 +10,7 @@ If not clear, this is a work in progress.
 
 ### Sources
 - Alien images, from [Kenney](kenney.nl).
+- Earth image: https://freesvg.org/planet-earth
 - [Inkscape](https://inkscape.org/) for some SVG edits.
 - Followed some parts of the tutorial of [Spicy Yoghurt](https://spicyyoghurt.com/tutorials/html5-javascript-game-development/images-and-sprite-animations).
 - https://stackoverflow.com/a/21274650

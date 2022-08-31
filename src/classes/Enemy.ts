@@ -62,61 +62,6 @@ export default class Enemy extends Actor{
       return this;
     }
 
-    // public static detectCollisions(){
-    //   let obj1;
-    //   let obj2;
-  
-    //   // Reset collision state of all objects
-    //   for (let i = 0; i < Enemy.instanceList.length; i++) {
-    //     Enemy.instanceList[i].isColliding = false;
-    //   }
-  
-    //   // Start checking for collisions
-    //   for (let i = 0; i < Enemy.instanceList.length; i++)
-    //   {
-    //       obj1 = Enemy.instanceList[i];
-    //       for (let j = i + 1; j < Enemy.instanceList.length; j++)
-    //       {
-    //           obj2 = Enemy.instanceList[j];
-  
-    //           // Compare object1 with object2
-    //           if (circleIntersect(obj1.x, obj1.y, obj1.radius, obj2.x,obj2.y,obj2.radius)){
-    //               Enemy.collisionResolve(obj1,obj2);
-    //               Enemy.surfaceResistance(obj1,obj2);
-    //           }
-    //       }
-    //   }
-
-    //   const restitution = 0.90;
-    //   detectEdgeCollisions();
-
-    //   function detectEdgeCollisions()
-    //   {
-    //       let obj;
-    //       for (let i = 0; i < Enemy.instanceList.length; i++)
-    //       {
-    //           obj = Enemy.instanceList[i];
-     
-    //           // Check for left and right
-    //           if (obj.x < obj.radius){
-    //               obj.hspeed = Math.abs(obj.hspeed) * restitution;
-    //               obj.x = obj.radius;
-    //           }else if (obj.x > canvasWidth - obj.radius){
-    //               obj.hspeed = -Math.abs(obj.hspeed) * restitution;
-    //               obj.x = canvasWidth - obj.radius;
-    //           }
-     
-    //           // Check for bottom and top
-    //           if (obj.y < obj.radius){
-    //               obj.vspeed = Math.abs(obj.vspeed) * restitution;
-    //               obj.y = obj.radius;
-    //           } else if (obj.y > canvasHeight - obj.radius){
-    //               obj.vspeed = -Math.abs(obj.vspeed) * restitution;
-    //               obj.y = canvasHeight - obj.radius;
-    //           }
-    //       }
-    //  }      
-    // }
 
     public draw(ctx:CanvasRenderingContext2D){  
 
@@ -129,10 +74,7 @@ export default class Enemy extends Actor{
             });
         }
         else{
-            // ctx.rotate(this.angle);
-            // ctx.drawImage(this.image,this.x-this.width/2,this.y-this.height/2); 
-            // ctx.rotate(-this.angle);
-
+           
             // Set the origin to the center of the circle, rotate the context, move the origin back
             ctx.translate(this.x,this.y);
             ctx.rotate(this.angle+Math.PI/2);
