@@ -8,3 +8,4 @@
 - Inkscape
 - https://spicyyoghurt.com/tutorials/html5-javascript-game-development/images-and-sprite-animations
 - https://stackoverflow.com/a/21274650
+- Game Idea: Misery from Arcen Games.
