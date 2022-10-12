@@ -1,7 +1,8 @@
 import { useRef,useEffect,useState,MouseEvent  } from 'react'
-import Enemy from './classes/Enemy';
-import Player from './classes/Player';
+import createEnemy from './classes/Enemy';
+// import Player from './classes/Player';
 import Actor from './classes/Actor';
+import createPlayer,{Player} from './classes/Player';
 
 import './App.css'
 import { canvasHeight, canvasWidth } from './config';
@@ -16,19 +17,17 @@ const Canvas = () =>{
   const oldTimeStampRef = useRef<Date|undefined>();
 
   function handleClick(event: MouseEvent<HTMLCanvasElement>){
+
     let newX= event.clientX - (event?.target as HTMLInputElement).offsetLeft;
-    let newY= event.clientY - (event?.target as HTMLInputElement).offsetTop
-    setCoords({
-      x: newX,
-      y: newY,
-    });
-    // Actor.instanceList.filter(actor=>actor.type==='player')[0]forEach(a=>{
-    //   a.target={x:newX,y:newY};
-    //     a.updateSpeedAndAngle();
-      
-    // })
-    (Actor.player as Player).target={x:newX,y:newY};
-    (Actor.player as Player).updateSpeedAndAngle();
+    let newY= event.clientY - (event?.target as HTMLInputElement).offsetTop;
+    if(Math.hypot(newX-(Actor.player as Player).x,newY-(Actor.player as Player).y)>(Actor.player as Player).radius){
+      setCoords({
+        x: newX,
+        y: newY,
+      });
+      (Actor.player as Player).target={x:newX,y:newY};
+      (Actor.player as Player).updateSpeedAndAngle();
+    }
   };
 
   function drawEverything(ctx:CanvasRenderingContext2D){
@@ -47,7 +46,7 @@ const Canvas = () =>{
       secondsPassed = (Number(timeStamp) - Number(oldTimeStampRef.current))/1000;
       ctx.clearRect ( 0 , 0 , canvasWidth , canvasHeight );
       moveEverything(secondsPassed);
-      Enemy.detectCollisions();
+      Actor.detectCollisions();
       drawEverything(ctx);      
       fpsRef.current = Math.round(1 / secondsPassed);
     }
@@ -57,20 +56,22 @@ const Canvas = () =>{
   }
 
 
-  function replaceEverything(ctx:CanvasRenderingContext2D){
-    Enemy.instanceList.forEach(a=>
-      {
-        a.replace();
-        a.draw(ctx);        
-      }) 
-  }
+  // function replaceEverything(ctx:CanvasRenderingContext2D){
+  //   Enemy.instanceList.forEach(a=>
+  //     {
+  //       a.replace();
+  //       a.draw(ctx);        
+  //     }) 
+  // }
 
   useEffect(() => {
 
     if (!Actor.player){
-      new Player({x:canvasWidth/2,y:canvasHeight/2});
+      // new Player({x:canvasWidth/2,y:canvasHeight/2});
+      createPlayer({x:canvasWidth/2,y:canvasHeight/2});
+
     }
-    // new Enemy({x:(Actor.player as Player).x,y:(Actor.player as Player).y});
+    createEnemy({x:(Actor.player as Player).x,y:(Actor.player as Player).y});
     
     
 
@@ -99,7 +100,7 @@ const Canvas = () =>{
     <>
       <p>x:{coords.x} y:{coords.y}</p>
       <canvas tabIndex={0} ref={canvasRef} 
-      onKeyDown={()=>replaceEverything(canvasCtxRef.current as CanvasRenderingContext2D)}
+      // onKeyDown={()=>replaceEverything(canvasCtxRef.current as CanvasRenderingContext2D)}
       onClick={handleClick}/>
     </>
   )
