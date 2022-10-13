@@ -3,13 +3,13 @@ import { canvasHeight, canvasWidth } from "../config";
 import { circleIntersect } from "../utilities";
 import { Player } from "./Player";
 import {Enemy} from "./Enemy"
-// import {Player} from './methods'
 
 type ActorT = Enemy|Player;
 
 export default class Actor {
 
     static instanceList: (ActorT)[] = [];
+    static enemyList: (Enemy)[] = [];
     static player: Player | null=null;
 
     public static detectCollisions() {

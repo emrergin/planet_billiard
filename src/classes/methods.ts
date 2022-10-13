@@ -5,7 +5,7 @@ export interface MovingObject {
     vspeed: number;
     x: number;
     y: number;
-    hasFriction: boolean;
+    friction: number;
     image: HTMLImageElement;
     radius: number;
     restitution: number;
@@ -30,10 +30,9 @@ export function moveGeneric(secondsPassed: number, obj: MovingObject) {
         return;
     }
 
-    if (obj.hasFriction) {
-        obj.hspeed = 0.999 * obj.hspeed;
-        obj.vspeed = 0.999 * obj.vspeed;
-    }
+    
+    obj.hspeed = (1-obj.friction) * obj.hspeed;
+    obj.vspeed = (1-obj.friction) * obj.vspeed;
 
     obj.x += obj.hspeed * secondsPassed;
     obj.y += obj.vspeed * secondsPassed;

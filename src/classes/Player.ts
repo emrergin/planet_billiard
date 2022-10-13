@@ -13,12 +13,15 @@ export interface Player extends MovingObject {
     updateSpeedAndAngle: () => void;
     move: (secondsPassed: number) => void;
     draw: (ctx: CanvasRenderingContext2D) => void;
+    // drawShooter:(ctx: CanvasRenderingContext2D,point:Location) => void;
 }
+
 
 export default function createPlayer(
     target: Location,
     x = canvasWidth / 2,
-    y = canvasHeight / 2
+    y = canvasHeight / 2,
+    friction=0.01
 ) {
     const earthImage = document.createElement("img");
     earthImage.src = earth;
@@ -37,11 +40,12 @@ export default function createPlayer(
         radius: 0,
         restitution: 0.95,
         isColliding: false,
-        hasFriction: true,
+        friction,
         updateSpeedAndAngle: () => updateSpeedAndAngleGeneric(playerObject),
         move: (secondsPassed: number) =>
             moveGeneric(secondsPassed, playerObject),
         draw: (ctx: CanvasRenderingContext2D) => drawGeneric(ctx, playerObject,true),
+        // drawShooter: (ctx: CanvasRenderingContext2D,point:Location) => drawShooterGeneric(ctx, playerObject,point),
     };
     Actor.player = playerObject;
     Actor.instanceList.push(playerObject);

@@ -1,8 +1,8 @@
 import { useRef,useEffect,useState,MouseEvent  } from 'react'
 import createEnemy from './classes/Enemy';
-// import Player from './classes/Player';
 import Actor from './classes/Actor';
 import createPlayer,{Player} from './classes/Player';
+import { Location } from './classes/methods';
 
 import './App.css'
 import { canvasHeight, canvasWidth } from './config';
@@ -12,14 +12,17 @@ const Canvas = () =>{
   const [coords, setCoords] = useState({x: 0, y: 0});
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
-  const fpsRef = useRef<number>(0); 
+//   const fpsRef = useRef<number>(0); 
   const requestRef=useRef<undefined|number>(); 
   const oldTimeStampRef = useRef<Date|undefined>();
+  let clickStart: boolean=false;
+  let mouseLocation:Location = {x:canvasWidth/2,y:canvasHeight/2};
 
-  function handleClick(event: MouseEvent<HTMLCanvasElement>){
+  function handleMouseDown(event: MouseEvent<HTMLCanvasElement>){
 
     let newX= event.clientX - (event?.target as HTMLInputElement).offsetLeft;
     let newY= event.clientY - (event?.target as HTMLInputElement).offsetTop;
+    
     if(Math.hypot(newX-(Actor.player as Player).x,newY-(Actor.player as Player).y)>(Actor.player as Player).radius){
       setCoords({
         x: newX,
@@ -28,15 +31,68 @@ const Canvas = () =>{
       (Actor.player as Player).target={x:newX,y:newY};
       (Actor.player as Player).updateSpeedAndAngle();
     }
+    else{
+        (Actor.player as Player).hspeed=0;
+        (Actor.player as Player).vspeed=0;
+        clickStart = true;
+        mouseLocation.x=(Actor.player as Player).x;
+        mouseLocation.y=(Actor.player as Player).y;
+    }
   };
+    function handleMouseUp(event: MouseEvent<HTMLCanvasElement>){
+        // mouseLocation.x= event.clientX - (event?.target as HTMLInputElement).offsetLeft;
+        // mouseLocation.y= event.clientY - (event?.target as HTMLInputElement).offsetTop;
+
+        if(clickStart){
+            clickStart=false;
+            let speed = Math.hypot(mouseLocation.x-(Actor.player as Player).x,
+                mouseLocation.y-(Actor.player as Player).y
+            );
+            let angle = Math.atan2((Actor.player as Player).y - mouseLocation.y, (Actor.player as Player).x - mouseLocation.x);
+            (Actor.player as Player).hspeed= speed * Math.cos(angle);
+            (Actor.player as Player).vspeed= speed * Math.sin(angle);
+
+            // mouseLocation.x=(Actor.player as Player).x;
+            // mouseLocation.y=(Actor.player as Player).y;
+        }
+    
+    }
+
+  function handleMouseMove(event: MouseEvent<HTMLCanvasElement>,ctx:CanvasRenderingContext2D){
+
+
+    if(clickStart){
+        let newX= event.clientX - (event?.target as HTMLInputElement).offsetLeft;
+        let newY= event.clientY - (event?.target as HTMLInputElement).offsetTop;
+        mouseLocation.x=newX;
+        mouseLocation.y=newY;
+
+    }
+  }
+
+  function drawHitline(ctx:CanvasRenderingContext2D){
+    if(clickStart){
+        let width = Math.max(Math.hypot(mouseLocation.x-(Actor.player as Player).x,
+                mouseLocation.y-(Actor.player as Player).y)/50,2);
+                
+        // ctx.strokeStyle = "#000000";
+        ctx.strokeStyle = `rgb(${200*(width/7)}, 0, 0)`;
+        ctx.lineWidth = width;
+        ctx.beginPath();
+        ctx.moveTo((Actor.player as Player).x, (Actor.player as Player).y);
+        ctx.lineTo(mouseLocation.x, mouseLocation.y);
+        ctx.stroke();
+    }
+  }
 
   function drawEverything(ctx:CanvasRenderingContext2D){
-    Actor.instanceList.forEach(a=>a.draw(ctx)) 
+    Actor.instanceList.forEach(a=>a.draw(ctx)); 
   }
 
   function moveEverything(secondsPassed:number){
-    Actor.instanceList.forEach(a=>a.updateSpeedAndAngle())
-    Actor.instanceList.forEach(a=>a.move(secondsPassed))
+    Actor.enemyList.forEach(a=>a.updateSpeedAndAngle());
+    Actor.instanceList.forEach(a=>a.move(secondsPassed));
+    Actor.detectCollisions();
   }
 
   let secondsPassed:number=0;
@@ -46,35 +102,22 @@ const Canvas = () =>{
       secondsPassed = (Number(timeStamp) - Number(oldTimeStampRef.current))/1000;
       ctx.clearRect ( 0 , 0 , canvasWidth , canvasHeight );
       moveEverything(secondsPassed);
-      Actor.detectCollisions();
-      drawEverything(ctx);      
-      fpsRef.current = Math.round(1 / secondsPassed);
+      drawHitline(ctx);        
+      drawEverything(ctx);          
+    //   fpsRef.current = Math.round(1 / secondsPassed);
     }
 
     oldTimeStampRef.current = timeStamp;
     requestRef.current = window.requestAnimationFrame(()=>gameLoop(ctx));
   }
 
-
-  // function replaceEverything(ctx:CanvasRenderingContext2D){
-  //   Enemy.instanceList.forEach(a=>
-  //     {
-  //       a.replace();
-  //       a.draw(ctx);        
-  //     }) 
-  // }
-
   useEffect(() => {
 
     if (!Actor.player){
-      // new Player({x:canvasWidth/2,y:canvasHeight/2});
       createPlayer({x:canvasWidth/2,y:canvasHeight/2});
 
     }
-    createEnemy({x:(Actor.player as Player).x,y:(Actor.player as Player).y});
-    
-    
-
+    // createEnemy({x:(Actor.player as Player).x,y:(Actor.player as Player).y});
     
     if (canvasRef.current!==null){
       canvasCtxRef.current = canvasRef.current.getContext('2d');
@@ -101,7 +144,9 @@ const Canvas = () =>{
       <p>x:{coords.x} y:{coords.y}</p>
       <canvas tabIndex={0} ref={canvasRef} 
       // onKeyDown={()=>replaceEverything(canvasCtxRef.current as CanvasRenderingContext2D)}
-      onClick={handleClick}/>
+      onMouseDown={handleMouseDown}
+      onMouseMove={(event)=>handleMouseMove(event,canvasCtxRef.current as CanvasRenderingContext2D)}
+      onMouseUp={handleMouseUp}/>
     </>
   )
 }

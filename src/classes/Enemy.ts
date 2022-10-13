@@ -77,7 +77,7 @@ function updateSpeedAndAngleEnemy(obj: Enemy) {
     }
 }
 
-export default function createPlayer(
+export default function createEnemy(
     target: Location,
     x = randomWidth(23.5),
     y = randomHeight(23.5),
@@ -85,23 +85,24 @@ export default function createPlayer(
     color: EnemyColor = ["red", "green", "blue"][
         Math.floor(Math.random() * 3)
     ] as EnemyColor,
-    hasFriction: boolean = false
+    friction: number = 0
 ) {
+    const angle = Math.atan2(target.y - y, target.x - x);
     const enemyObject: Enemy = {
         target: {
             x: target.x,
             y: target.y,
         },
-        angle: Math.atan2(target.y - y, target.x - x),
-        hspeed: Math.cos(Math.atan2(target.y - y, target.x - x)) * speed,
-        vspeed: Math.sin(Math.atan2(target.y - y, target.x - x)) * speed,
+        angle,
+        hspeed: Math.cos(angle) * speed,
+        vspeed: Math.sin(angle) * speed,
         x,
         y,
         image: imageMap.get(color) as HTMLImageElement,
         radius: 0,
         restitution: 0.95,
         isColliding: false,
-        hasFriction,
+        friction,
         rotateSpeed: Math.PI / 180,
         color,
         updateSpeedAndAngle: () => updateSpeedAndAngleEnemy(enemyObject),
@@ -110,6 +111,7 @@ export default function createPlayer(
         draw: (ctx: CanvasRenderingContext2D) => drawGeneric(ctx, enemyObject),
     };
     Actor.instanceList.push(enemyObject);
+    Actor.enemyList.push(enemyObject);
 }
 
 
