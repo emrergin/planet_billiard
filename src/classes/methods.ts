@@ -30,15 +30,18 @@ export function moveGeneric(secondsPassed: number, obj: MovingObject) {
         return;
     }
 
-    
-    obj.hspeed = (1-obj.friction) * obj.hspeed;
-    obj.vspeed = (1-obj.friction) * obj.vspeed;
+    obj.hspeed = (1 - obj.friction) * obj.hspeed;
+    obj.vspeed = (1 - obj.friction) * obj.vspeed;
 
     obj.x += obj.hspeed * secondsPassed;
     obj.y += obj.vspeed * secondsPassed;
 }
 
-export function drawGeneric(ctx: CanvasRenderingContext2D, obj: MovingObject, withOutline:boolean =false) {
+export function drawGeneric(
+    ctx: CanvasRenderingContext2D,
+    obj: MovingObject,
+    withOutline: boolean = false
+) {
     if (!obj.image.complete) {
         obj.image.addEventListener("load", () => {
             ctx.drawImage(obj.image, obj.x - obj.radius, obj.radius);
@@ -57,7 +60,7 @@ export function drawGeneric(ctx: CanvasRenderingContext2D, obj: MovingObject, wi
     }
     // console.log(obj.x, obj.y, obj.radius)
 
-    if(withOutline){
+    if (withOutline) {
         ctx.strokeStyle = "#000000";
         ctx.lineWidth = 2;
         ctx.beginPath();

@@ -7,12 +7,7 @@ import { randomHeight, randomWidth } from "../utilities";
 import Actor from "./Actor";
 import { Player } from "./Player";
 
-import {
-    MovingObject,
-    drawGeneric,
-    moveGeneric,
-    Location,
-} from "./methods";
+import { MovingObject, drawGeneric, moveGeneric, Location } from "./methods";
 // import Enemy from './EnemyOld'
 
 type EnemyColor = "red" | "blue" | "green";
@@ -114,8 +109,11 @@ export default function createEnemy(
     Actor.enemyList.push(enemyObject);
 }
 
-
-function replace(obj:Enemy,x: number = randomWidth(23.5), y: number = randomHeight(23.5)) {
+function replace(
+    obj: Enemy,
+    x: number = randomWidth(23.5),
+    y: number = randomHeight(23.5)
+) {
     obj.x = x;
     obj.y = y;
     obj.angle = Math.random() * Math.PI * 2;

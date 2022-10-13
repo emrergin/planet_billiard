@@ -16,12 +16,11 @@ export interface Player extends MovingObject {
     // drawShooter:(ctx: CanvasRenderingContext2D,point:Location) => void;
 }
 
-
 export default function createPlayer(
     target: Location,
     x = canvasWidth / 2,
     y = canvasHeight / 2,
-    friction=0.01
+    friction = 0.01
 ) {
     const earthImage = document.createElement("img");
     earthImage.src = earth;
@@ -44,7 +43,8 @@ export default function createPlayer(
         updateSpeedAndAngle: () => updateSpeedAndAngleGeneric(playerObject),
         move: (secondsPassed: number) =>
             moveGeneric(secondsPassed, playerObject),
-        draw: (ctx: CanvasRenderingContext2D) => drawGeneric(ctx, playerObject,true),
+        draw: (ctx: CanvasRenderingContext2D) =>
+            drawGeneric(ctx, playerObject, true),
         // drawShooter: (ctx: CanvasRenderingContext2D,point:Location) => drawShooterGeneric(ctx, playerObject,point),
     };
     Actor.player = playerObject;

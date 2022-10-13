@@ -2,15 +2,14 @@ import { canvasHeight, canvasWidth } from "../config";
 
 import { circleIntersect } from "../utilities";
 import { Player } from "./Player";
-import {Enemy} from "./Enemy"
+import { Enemy } from "./Enemy";
 
-type ActorT = Enemy|Player;
+type ActorT = Enemy | Player;
 
 export default class Actor {
-
-    static instanceList: (ActorT)[] = [];
-    static enemyList: (Enemy)[] = [];
-    static player: Player | null=null;
+    static instanceList: ActorT[] = [];
+    static enemyList: Enemy[] = [];
+    static player: Player | null = null;
 
     public static detectCollisions() {
         let obj1;
