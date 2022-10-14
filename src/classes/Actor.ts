@@ -55,19 +55,26 @@ export default class Actor {
                 if (obj.x < obj.radius) {
                     obj.hspeed = Math.abs(obj.hspeed) * restitution;
                     obj.x = obj.radius;
+                    resetAngle(obj);
                 } else if (obj.x > canvasWidth - obj.radius) {
                     obj.hspeed = -Math.abs(obj.hspeed) * restitution;
                     obj.x = canvasWidth - obj.radius;
+                    resetAngle(obj);
                 }
 
                 // Check for bottom and top
                 if (obj.y < obj.radius) {
                     obj.vspeed = Math.abs(obj.vspeed) * restitution;
                     obj.y = obj.radius;
+                    resetAngle(obj);
                 } else if (obj.y > canvasHeight - obj.radius) {
                     obj.vspeed = -Math.abs(obj.vspeed) * restitution;
                     obj.y = canvasHeight - obj.radius;
+                    resetAngle(obj);
                 }
+            }
+            function resetAngle(obj: ActorT) {
+                obj.angle = Math.atan2(obj.vspeed, obj.hspeed);
             }
         }
     }

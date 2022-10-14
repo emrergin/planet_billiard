@@ -12,84 +12,93 @@ const Canvas = () => {
     //   const fpsRef = useRef<number>(0);
     const requestRef = useRef<undefined | number>();
     const oldTimeStampRef = useRef<Date | undefined>();
-    let clickStart: boolean = false;
-    let mouseLocation: Location = { x: canvasWidth / 2, y: canvasHeight / 2 };
+    const clickStart = useRef<boolean>(false);
+    const mouseLocation = useRef<Location>({ x: canvasWidth / 2, y: canvasHeight / 2 });
+    // let mouseLocation: Location = ;
+    // console.log(`refresh`,clickStart.current);
 
     function handleMouseDown(event: MouseEvent<HTMLCanvasElement>) {
+        // mouseLocation.x = (Actor.player as Player).x;
+        // mouseLocation.y = (Actor.player as Player).y;
+
+        let newX =
+            event.clientX - (event?.target as HTMLInputElement).offsetLeft;
+        let newY =
+            event.clientY - (event?.target as HTMLInputElement).offsetTop;
+        if (
+            Math.hypot(
+                newX - (Actor.player as Player).x,
+                newY - (Actor.player as Player).y
+            ) <= (Actor.player as Player).radius
+        ) {
+            clickStart.current = true;
+            (Actor.player as Player).hspeed = 0;
+            (Actor.player as Player).vspeed = 0;
+        }
+    }
+    function handleMouseUp(event: MouseEvent<HTMLCanvasElement>) {
+
         let newX =
             event.clientX - (event?.target as HTMLInputElement).offsetLeft;
         let newY =
             event.clientY - (event?.target as HTMLInputElement).offsetTop;
 
-        if (
-            Math.hypot(
-                newX - (Actor.player as Player).x,
-                newY - (Actor.player as Player).y
-            ) > (Actor.player as Player).radius
-        ) {
-            setCoords({
-                x: newX,
-                y: newY,
-            });
-            (Actor.player as Player).target = { x: newX, y: newY };
-            (Actor.player as Player).updateSpeedAndAngle();
+        if (!clickStart.current) {
+            if (
+                Math.hypot(
+                    newX - (Actor.player as Player).x,
+                    newY - (Actor.player as Player).y
+                ) > (Actor.player as Player).radius
+            ) {
+                setCoords({
+                    x: newX,
+                    y: newY,
+                });
+                (Actor.player as Player).target = { x: newX, y: newY };
+                (Actor.player as Player).updateSpeedAndAngle();
+            }
         } else {
-            (Actor.player as Player).hspeed = 0;
-            (Actor.player as Player).vspeed = 0;
-            clickStart = true;
-            mouseLocation.x = (Actor.player as Player).x;
-            mouseLocation.y = (Actor.player as Player).y;
-        }
-    }
-    function handleMouseUp(event: MouseEvent<HTMLCanvasElement>) {
-        // mouseLocation.x= event.clientX - (event?.target as HTMLInputElement).offsetLeft;
-        // mouseLocation.y= event.clientY - (event?.target as HTMLInputElement).offsetTop;
-
-        if (clickStart) {
-            clickStart = false;
+            clickStart.current = false;
             let speed = Math.hypot(
-                mouseLocation.x - (Actor.player as Player).x,
-                mouseLocation.y - (Actor.player as Player).y
+                mouseLocation.current.x - (Actor.player as Player).x,
+                mouseLocation.current.y - (Actor.player as Player).y
             );
             let angle = Math.atan2(
-                (Actor.player as Player).y - mouseLocation.y,
-                (Actor.player as Player).x - mouseLocation.x
+                (Actor.player as Player).y - mouseLocation.current.y,
+                (Actor.player as Player).x - mouseLocation.current.x
             );
             (Actor.player as Player).hspeed = speed * Math.cos(angle);
             (Actor.player as Player).vspeed = speed * Math.sin(angle);
             (Actor.player as Player).angle = angle;
 
-            // mouseLocation.x=(Actor.player as Player).x;
-            // mouseLocation.y=(Actor.player as Player).y;
+            mouseLocation.current.x = (Actor.player as Player).x;
+            mouseLocation.current.y = (Actor.player as Player).y;
         }
     }
 
     function handleMouseOut(event: MouseEvent<HTMLCanvasElement>) {
-        clickStart = false;
-        mouseLocation.x = (Actor.player as Player).x;
-        mouseLocation.y = (Actor.player as Player).y;
+        clickStart.current = false;
+        mouseLocation.current.x = (Actor.player as Player).x;
+        mouseLocation.current.y = (Actor.player as Player).y;
     }
 
-    function handleMouseMove(
-        event: MouseEvent<HTMLCanvasElement>,
-        ctx: CanvasRenderingContext2D
-    ) {
-        if (clickStart) {
-            let newX =
-                event.clientX - (event?.target as HTMLInputElement).offsetLeft;
-            let newY =
-                event.clientY - (event?.target as HTMLInputElement).offsetTop;
-            mouseLocation.x = newX;
-            mouseLocation.y = newY;
-        }
+    function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
+        // if (clickStart.current) {
+        let newX =
+            event.clientX - (event?.target as HTMLInputElement).offsetLeft;
+        let newY =
+            event.clientY - (event?.target as HTMLInputElement).offsetTop;
+        mouseLocation.current.x = newX;
+        mouseLocation.current.y = newY;
+        // }
     }
 
     function drawHitline(ctx: CanvasRenderingContext2D) {
-        if (clickStart) {
+        if (clickStart.current) {
             let width = Math.max(
                 Math.hypot(
-                    mouseLocation.x - (Actor.player as Player).x,
-                    mouseLocation.y - (Actor.player as Player).y
+                    mouseLocation.current.x - (Actor.player as Player).x,
+                    mouseLocation.current.y - (Actor.player as Player).y
                 ) / 50,
                 2
             );
@@ -99,7 +108,7 @@ const Canvas = () => {
             ctx.lineWidth = width;
             ctx.beginPath();
             ctx.moveTo((Actor.player as Player).x, (Actor.player as Player).y);
-            ctx.lineTo(mouseLocation.x, mouseLocation.y);
+            ctx.lineTo(mouseLocation.current.x, mouseLocation.current.y);
             ctx.stroke();
         }
     }
@@ -165,12 +174,7 @@ const Canvas = () => {
                 ref={canvasRef}
                 // onKeyDown={()=>replaceEverything(canvasCtxRef.current as CanvasRenderingContext2D)}
                 onMouseDown={handleMouseDown}
-                onMouseMove={(event) =>
-                    handleMouseMove(
-                        event,
-                        canvasCtxRef.current as CanvasRenderingContext2D
-                    )
-                }
+                onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseOut={handleMouseOut}
             />
