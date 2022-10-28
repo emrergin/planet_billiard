@@ -73,14 +73,16 @@ function updateSpeedAndAngleEnemy(obj: Enemy) {
     }
 }
 
-function destroy(){
-    Actor.points+=100;
-    console.log(Actor.points)
+function destroy() {
+    Actor.points += 100;
+    console.log(Actor.points);
 }
 
-function startDaze(obj: Enemy){
-    obj.isDazed=true;
-    setTimeout(()=>{obj.isDazed=false},1500);
+function startDaze(obj: Enemy) {
+    obj.isDazed = true;
+    setTimeout(() => {
+        obj.isDazed = false;
+    }, 1500);
 }
 
 export default function createEnemy(
@@ -115,8 +117,10 @@ export default function createEnemy(
         move: (secondsPassed: number) =>
             moveGeneric(secondsPassed, enemyObject),
         draw: (ctx: CanvasRenderingContext2D) => drawGeneric(ctx, enemyObject),
-        destroy: ()=>{destroy();},
-        isDazed: false
+        destroy: () => {
+            destroy();
+        },
+        isDazed: false,
     };
     Actor.instanceList.push(enemyObject);
     Actor.enemyList.push(enemyObject);

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, MouseEvent } from "react";
+import { useRef, useEffect, useState, MouseEvent, TouchEvent } from "react";
 import createEnemy from "./classes/Enemy";
 import Actor from "./classes/Actor";
 import createPlayer, { Player } from "./classes/Player";
@@ -7,14 +7,19 @@ import { canvasHeight, canvasWidth } from "./config";
 
 const Canvas = () => {
     // const [coords, setCoords] = useState({ x: 0, y: 0 });
-    let coords ={ x: 0, y: 0 };
+
+    let coords = { x: 0, y: 0 };
+    const [points, setPoints] = useState(0);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
     //   const fpsRef = useRef<number>(0);
     const requestRef = useRef<undefined | number>();
     const oldTimeStampRef = useRef<Date | undefined>();
     const clickStart = useRef<boolean>(false);
-    const mouseLocation = useRef<Location>({ x: canvasWidth / 2, y: canvasHeight / 2 });
+    const mouseLocation = useRef<Location>({
+        x: canvasWidth / 2,
+        y: canvasHeight / 2,
+    });
     // let mouseLocation: Location = ;
     // console.log(`refresh`,clickStart.current);
 
@@ -38,7 +43,6 @@ const Canvas = () => {
         }
     }
     function handleMouseUp(event: MouseEvent<HTMLCanvasElement>) {
-
         let newX =
             event.clientX - (event?.target as HTMLInputElement).offsetLeft;
         let newY =
@@ -56,9 +60,9 @@ const Canvas = () => {
                 //     y: newY,
                 // });
                 coords = {
-                        x: newX,
-                        y: newY,
-                    };
+                    x: newX,
+                    y: newY,
+                };
                 (Actor.player as Player).target = { x: newX, y: newY };
                 (Actor.player as Player).updateSpeedAndAngle();
             }
@@ -87,12 +91,25 @@ const Canvas = () => {
         mouseLocation.current.y = (Actor.player as Player).y;
     }
 
-    function handleMouseMove(event: MouseEvent<HTMLCanvasElement>) {
+    function handleMouseMove(
+        event: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>
+    ) {
         // if (clickStart.current) {
-        let newX =
-            event.clientX - (event?.target as HTMLInputElement).offsetLeft;
-        let newY =
-            event.clientY - (event?.target as HTMLInputElement).offsetTop;
+        // |TouchEvent<HTMLCanvasElement>
+        let newX: number, newY: number;
+        if ("touches" in event) {
+            newX =
+                event.touches[0].clientX -
+                (event?.target as HTMLInputElement).offsetLeft;
+            newY =
+                event.touches[0].clientY -
+                (event?.target as HTMLInputElement).offsetTop;
+        } else {
+            newX =
+                event.clientX - (event?.target as HTMLInputElement).offsetLeft;
+            newY =
+                event.clientY - (event?.target as HTMLInputElement).offsetTop;
+        }
         mouseLocation.current.x = newX;
         mouseLocation.current.y = newY;
         // }
@@ -143,14 +160,22 @@ const Canvas = () => {
 
         oldTimeStampRef.current = timeStamp;
         requestRef.current = window.requestAnimationFrame(() => gameLoop(ctx));
+
+        setPoints(Actor.points);
     }
 
     useEffect(() => {
         if (!Actor.player) {
             createPlayer({ x: canvasWidth / 2, y: canvasHeight / 2 });
         }
-        // createEnemy({x:(Actor.player as Player).x,y:(Actor.player as Player).y});
-        // createEnemy({x:(Actor.player as Player).x,y:(Actor.player as Player).y});
+        // createEnemy({
+        //     x: (Actor.player as Player).x,
+        //     y: (Actor.player as Player).y,
+        // });
+        // createEnemy({
+        //     x: (Actor.player as Player).x,
+        //     y: (Actor.player as Player).y,
+        // });
         // createEnemy({x:(Actor.player as Player).x,y:(Actor.player as Player).y});
 
         if (canvasRef.current !== null) {
@@ -175,7 +200,7 @@ const Canvas = () => {
         <>
             <p>
                 {/* x:{coords.x} y:{coords.y} */}
-                points: {Actor.points}
+                points: {points}
             </p>
             <canvas
                 tabIndex={0}
@@ -183,6 +208,7 @@ const Canvas = () => {
                 // onKeyDown={()=>replaceEverything(canvasCtxRef.current as CanvasRenderingContext2D)}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
+                onTouchMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseOut={handleMouseOut}
             />

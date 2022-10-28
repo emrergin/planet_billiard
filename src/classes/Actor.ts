@@ -11,7 +11,7 @@ export default class Actor {
     // static instanceList: Map<string,ActorT>;
     static enemyList: Enemy[] = [];
     static player: Player | null = null;
-    static points =0;
+    static points = 0;
 
     public static detectCollisions() {
         let obj1;
@@ -40,10 +40,9 @@ export default class Actor {
                     )
                 ) {
                     Actor.collisionResolve(obj1, obj2);
-                    if (i>0){                        
+                    if (i > 0) {
                         Actor.removeItem(j);
                         Actor.removeItem(i);
-                        console.log(j,i)
                     }
                     Actor.surfaceResistance(obj1, obj2);
                 }
@@ -117,10 +116,10 @@ export default class Actor {
         obj2.vspeed += collisionSpeed * vCollisionNorm.y;
     }
 
-    public static removeItem(i:number){
-        const lastItem = Actor.instanceList[Actor.instanceList.length-1];
+    public static removeItem(i: number) {
+        const lastItem = Actor.instanceList[Actor.instanceList.length - 1];
         Actor.instanceList[i].destroy?.();
-        Actor.instanceList[i]=lastItem;
+        Actor.instanceList[i] = lastItem;
         Actor.instanceList.pop();
     }
 
