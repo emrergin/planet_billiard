@@ -18,6 +18,7 @@ export interface Enemy extends MovingObject {
     updateSpeedAndAngle: () => void;
     move: (secondsPassed: number) => void;
     draw: (ctx: CanvasRenderingContext2D) => void;
+    isDazed: boolean;
 }
 
 const greenImage = document.createElement("img");
@@ -56,7 +57,7 @@ function updatedAngle(actorAngle: number, targetAngle: number, delta: number) {
 }
 
 function updateSpeedAndAngleEnemy(obj: Enemy) {
-    if (!obj.isColliding) {
+    if (!obj.isColliding && !obj.isDazed) {
         obj.target = {
             x: (Actor.player as Player).x,
             y: (Actor.player as Player).y,
@@ -70,6 +71,16 @@ function updateSpeedAndAngleEnemy(obj: Enemy) {
         obj.hspeed = currentSpeed * Math.cos(obj.angle);
         obj.vspeed = currentSpeed * Math.sin(obj.angle);
     }
+}
+
+function destroy(){
+    Actor.points+=100;
+    console.log(Actor.points)
+}
+
+function startDaze(obj: Enemy){
+    obj.isDazed=true;
+    setTimeout(()=>{obj.isDazed=false},1500);
 }
 
 export default function createEnemy(
@@ -104,6 +115,8 @@ export default function createEnemy(
         move: (secondsPassed: number) =>
             moveGeneric(secondsPassed, enemyObject),
         draw: (ctx: CanvasRenderingContext2D) => drawGeneric(ctx, enemyObject),
+        destroy: ()=>{destroy();},
+        isDazed: false
     };
     Actor.instanceList.push(enemyObject);
     Actor.enemyList.push(enemyObject);

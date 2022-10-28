@@ -10,6 +10,7 @@ export interface MovingObject {
     radius: number;
     restitution: number;
     isColliding: boolean;
+    destroy?: ()=>void;
 }
 
 export type Location = { x: number; y: number };

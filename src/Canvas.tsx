@@ -6,7 +6,8 @@ import { Location } from "./classes/methods";
 import { canvasHeight, canvasWidth } from "./config";
 
 const Canvas = () => {
-    const [coords, setCoords] = useState({ x: 0, y: 0 });
+    // const [coords, setCoords] = useState({ x: 0, y: 0 });
+    let coords ={ x: 0, y: 0 };
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
     //   const fpsRef = useRef<number>(0);
@@ -50,10 +51,14 @@ const Canvas = () => {
                     newY - (Actor.player as Player).y
                 ) > (Actor.player as Player).radius
             ) {
-                setCoords({
-                    x: newX,
-                    y: newY,
-                });
+                // setCoords({
+                //     x: newX,
+                //     y: newY,
+                // });
+                coords = {
+                        x: newX,
+                        y: newY,
+                    };
                 (Actor.player as Player).target = { x: newX, y: newY };
                 (Actor.player as Player).updateSpeedAndAngle();
             }
@@ -145,6 +150,8 @@ const Canvas = () => {
             createPlayer({ x: canvasWidth / 2, y: canvasHeight / 2 });
         }
         // createEnemy({x:(Actor.player as Player).x,y:(Actor.player as Player).y});
+        // createEnemy({x:(Actor.player as Player).x,y:(Actor.player as Player).y});
+        // createEnemy({x:(Actor.player as Player).x,y:(Actor.player as Player).y});
 
         if (canvasRef.current !== null) {
             canvasCtxRef.current = canvasRef.current.getContext("2d");
@@ -167,7 +174,8 @@ const Canvas = () => {
     return (
         <>
             <p>
-                x:{coords.x} y:{coords.y}
+                {/* x:{coords.x} y:{coords.y} */}
+                points: {Actor.points}
             </p>
             <canvas
                 tabIndex={0}
