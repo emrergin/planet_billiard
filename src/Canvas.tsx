@@ -1,18 +1,15 @@
 import { useRef, useEffect, useState, MouseEvent, TouchEvent } from "react";
-import createEnemy from "./classes/Enemy";
+// import createEnemy from "./classes/Enemy";
 import Actor from "./classes/Actor";
 import createPlayer, { Player } from "./classes/Player";
 import { Location } from "./classes/methods";
 import { canvasHeight, canvasWidth } from "./config";
+import { getClientCoordinates } from "./utilities";
 
 const Canvas = () => {
-    // const [coords, setCoords] = useState({ x: 0, y: 0 });
-
-    let coords = { x: 0, y: 0 };
     const [points, setPoints] = useState(0);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const canvasCtxRef = useRef<CanvasRenderingContext2D | null>(null);
-    //   const fpsRef = useRef<number>(0);
     const requestRef = useRef<undefined | number>();
     const oldTimeStampRef = useRef<Date | undefined>();
     const clickStart = useRef<boolean>(false);
@@ -20,17 +17,11 @@ const Canvas = () => {
         x: canvasWidth / 2,
         y: canvasHeight / 2,
     });
-    // let mouseLocation: Location = ;
-    // console.log(`refresh`,clickStart.current);
 
-    function handleMouseDown(event: MouseEvent<HTMLCanvasElement>) {
-        // mouseLocation.x = (Actor.player as Player).x;
-        // mouseLocation.y = (Actor.player as Player).y;
-
-        let newX =
-            event.clientX - (event?.target as HTMLInputElement).offsetLeft;
-        let newY =
-            event.clientY - (event?.target as HTMLInputElement).offsetTop;
+    function handleMouseDown(event: MouseEvent<HTMLCanvasElement>| TouchEvent<HTMLCanvasElement>) {
+        event.preventDefault();
+        const [newX,newY]=getClientCoordinates(event);
+            
         if (
             Math.hypot(
                 newX - (Actor.player as Player).x,
@@ -42,11 +33,9 @@ const Canvas = () => {
             (Actor.player as Player).vspeed = 0;
         }
     }
-    function handleMouseUp(event: MouseEvent<HTMLCanvasElement>) {
-        let newX =
-            event.clientX - (event?.target as HTMLInputElement).offsetLeft;
-        let newY =
-            event.clientY - (event?.target as HTMLInputElement).offsetTop;
+    function handleMouseUp(event: MouseEvent<HTMLCanvasElement>| TouchEvent<HTMLCanvasElement>) {
+        
+        const [newX,newY]=getClientCoordinates(event,true);
 
         if (!clickStart.current) {
             if (
@@ -55,14 +44,6 @@ const Canvas = () => {
                     newY - (Actor.player as Player).y
                 ) > (Actor.player as Player).radius
             ) {
-                // setCoords({
-                //     x: newX,
-                //     y: newY,
-                // });
-                coords = {
-                    x: newX,
-                    y: newY,
-                };
                 (Actor.player as Player).target = { x: newX, y: newY };
                 (Actor.player as Player).updateSpeedAndAngle();
             }
@@ -85,7 +66,7 @@ const Canvas = () => {
         }
     }
 
-    function handleMouseOut(event: MouseEvent<HTMLCanvasElement>) {
+    function handleMouseOut(event: MouseEvent<HTMLCanvasElement>| TouchEvent<HTMLCanvasElement>) {
         clickStart.current = false;
         mouseLocation.current.x = (Actor.player as Player).x;
         mouseLocation.current.y = (Actor.player as Player).y;
@@ -94,25 +75,10 @@ const Canvas = () => {
     function handleMouseMove(
         event: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>
     ) {
-        // if (clickStart.current) {
-        // |TouchEvent<HTMLCanvasElement>
-        let newX: number, newY: number;
-        if ("touches" in event) {
-            newX =
-                event.touches[0].clientX -
-                (event?.target as HTMLInputElement).offsetLeft;
-            newY =
-                event.touches[0].clientY -
-                (event?.target as HTMLInputElement).offsetTop;
-        } else {
-            newX =
-                event.clientX - (event?.target as HTMLInputElement).offsetLeft;
-            newY =
-                event.clientY - (event?.target as HTMLInputElement).offsetTop;
-        }
+        event.preventDefault();
+        const [newX,newY]=getClientCoordinates(event);
         mouseLocation.current.x = newX;
         mouseLocation.current.y = newY;
-        // }
     }
 
     function drawHitline(ctx: CanvasRenderingContext2D) {
@@ -168,14 +134,6 @@ const Canvas = () => {
         if (!Actor.player) {
             createPlayer({ x: canvasWidth / 2, y: canvasHeight / 2 });
         }
-        // createEnemy({
-        //     x: (Actor.player as Player).x,
-        //     y: (Actor.player as Player).y,
-        // });
-        // createEnemy({
-        //     x: (Actor.player as Player).x,
-        //     y: (Actor.player as Player).y,
-        // });
         // createEnemy({x:(Actor.player as Player).x,y:(Actor.player as Player).y});
 
         if (canvasRef.current !== null) {
@@ -208,9 +166,11 @@ const Canvas = () => {
                 // onKeyDown={()=>replaceEverything(canvasCtxRef.current as CanvasRenderingContext2D)}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
-                onTouchMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseOut={handleMouseOut}
+                onTouchMove={handleMouseMove}
+                onTouchStart={handleMouseDown}
+                onTouchEnd={handleMouseUp}
             />
         </>
     );
