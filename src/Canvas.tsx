@@ -18,10 +18,12 @@ const Canvas = () => {
         y: canvasHeight / 2,
     });
 
-    function handleMouseDown(event: MouseEvent<HTMLCanvasElement>| TouchEvent<HTMLCanvasElement>) {
+    function handleMouseDown(
+        event: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>
+    ) {
         event.preventDefault();
-        const [newX,newY]=getClientCoordinates(event);
-            
+        const [newX, newY] = getClientCoordinates(event);
+
         if (
             Math.hypot(
                 newX - (Actor.player as Player).x,
@@ -29,13 +31,16 @@ const Canvas = () => {
             ) <= (Actor.player as Player).radius
         ) {
             clickStart.current = true;
+            mouseLocation.current.x = newX;
+            mouseLocation.current.y = newY;
             (Actor.player as Player).hspeed = 0;
             (Actor.player as Player).vspeed = 0;
         }
     }
-    function handleMouseUp(event: MouseEvent<HTMLCanvasElement>| TouchEvent<HTMLCanvasElement>) {
-        
-        const [newX,newY]=getClientCoordinates(event,true);
+    function handleMouseUp(
+        event: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>
+    ) {
+        const [newX, newY] = getClientCoordinates(event, true);
 
         if (!clickStart.current) {
             if (
@@ -66,7 +71,9 @@ const Canvas = () => {
         }
     }
 
-    function handleMouseOut(event: MouseEvent<HTMLCanvasElement>| TouchEvent<HTMLCanvasElement>) {
+    function handleMouseOut(
+        event: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>
+    ) {
         clickStart.current = false;
         mouseLocation.current.x = (Actor.player as Player).x;
         mouseLocation.current.y = (Actor.player as Player).y;
@@ -76,7 +83,7 @@ const Canvas = () => {
         event: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>
     ) {
         event.preventDefault();
-        const [newX,newY]=getClientCoordinates(event);
+        const [newX, newY] = getClientCoordinates(event);
         mouseLocation.current.x = newX;
         mouseLocation.current.y = newY;
     }

@@ -8,6 +8,7 @@ If not clear, this is a work in progress.
 
 -   My first use case of non-null assertion operator.
 -   My second Canvas use, but first use with React and Typescript.
+-   To be able to use coordinates of touchend, instead of touches array, changedTouches should be used.
 
 ### Sources
 
